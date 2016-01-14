@@ -4,6 +4,8 @@
  */
 var drawElementsMainConfig = {
 		idLocation: "",
+		typeChange: "",
+		orderId: "",
 		rowL : false,
 		rowNC : false,
 		rowDC : false,
@@ -148,6 +150,7 @@ var drawElementsMainConfig = {
 			
 		},getListConfig: function(datos, containerElements, divContainer){
 			var data = "";
+			var rowsData = new Array();
 			if(datos.records.record.length > 0){
 				for(var idx = 0; idx < datos.records.record.length; idx++){
 					
@@ -156,7 +159,10 @@ var drawElementsMainConfig = {
 						data += "<td>"+datos.records.record[idx].location+"</td>";
 						data += "<td>"+datos.records.record[idx].location_name+"</td>";
 						data += "<td>"+datos.records.record[idx].type_change+"</td>";
-						data += "<td>"+datos.records.record[idx].date_request+"</td></tr>";
+						data += "<td>"+datos.records.record[idx].date_request+"</td>";
+						data += "<td>"+datos.records.record[idx].order_id+"</td>";
+						data += "<td style='text-align: center;'><button type='button' class='btn btn-default editRow' aria-label='Left Align'><span class='glyphicon glyphicon-pencil' aria-hidden='true'></span></button></td>";
+						data += "<td style='text-align: center;'><button type='button' class='btn btn-default deleteRow' aria-label='Left Align'><span class='glyphicon glyphicon-trash' aria-hidden='true'></span></button></td></tr>";
 					}catch(e){
 						console.log(e);
 					}
@@ -167,7 +173,10 @@ var drawElementsMainConfig = {
 					data += "<td>"+datos.records.record.location+"</td>";
 					data += "<td>"+datos.records.record.location_name+"</td>";
 					data += "<td>"+datos.records.record.type_change+"</td>";
-					data += "<td>"+datos.records.record.date_request+"</td></tr>";
+					data += "<td>"+datos.records.record.date_request+"</td>";
+					data += "<td>"+datos.records.record.order_id+"</td>";
+					data += "<td title='Editar Registro' style='text-align: center;'><button type='button' class='btn btn-default editRow' aria-label='Left Align'><span class='glyphicon glyphicon-pencil' aria-hidden='true'></span></button></td>";
+					data += "<td title='Eliminar Registro' style='text-align: center;'><button type='button' class='btn btn-default deleteRow' aria-label='Left Align'><span class='glyphicon glyphicon-trash' aria-hidden='true'></span></button></td></tr>";
 				}catch(e){
 					console.log(e);
 				}
@@ -184,17 +193,24 @@ var drawElementsMainConfig = {
    					"sTitle" : "Tipo de Cambio"
    				}, {
    					"sTitle" : "Fecha Implementacion"
+   				}, {
+   					"sTitle" : "Order ID"
+   				}, {
+   					"sTitle" : "Editar"
+   				}, {
+   					"sTitle" : "Eliminar"
    				}];
    			} catch (err) {
    			};
    			
-   			jQuery("#containerTable").empty();	
-   			var tableData = '<table class="table table-striped table-bordered" id="inboxTable">'+data+'</table>';
+   			jQuery("#containerTable").empty();	 
+   			var tableData = '<table class="table table-striped table-bordered cell-border compact hover" id="inboxTable">'+data+'</table>';
 
    			jQuery("#containerTable").append(tableData);
    			
-   			var oTable = jQuery("#inboxTable").dataTable({
-   				"aoColumns" : rowsHeaders
+   			var oTable = jQuery("#inboxTable").DataTable({
+   				"aoColumns" : rowsHeaders,
+   				"hover": true
    			});
    			
    			/*
@@ -202,7 +218,55 @@ var drawElementsMainConfig = {
    		        $(this).toggleClass('selected');
    		    } );*/
    			
-   			$("#inboxTable").delegate("tbody tr", "click", function () {
+   			/********************************************************/
+   			/* ELIMINA ROWS QUE NO SE DARAN DE ALTA */
+   			
+   			$('#inboxTable tbody').on( 'click', '.deleteRow', function () {   				
+   				
+   				var rowData = oTable.row( $(this).parents('tr') );
+   				drawElementsMainConfig.idLocation = rowData.data()[1];
+   				drawElementsMainConfig.orderId = rowData.data()[5];
+   				
+   				bootbox.confirm({ 
+   				    size: 'small',
+   				    message: "¿ Desea Eliminar Registro ?", 
+   				    callback: function(result){ 
+   				    	
+   				    	if(result){
+   				    		rowData.remove().draw();
+   							cnocConnector.invokeMashup(cnocConnector.serviceUpdateConfInbox, 
+   				        			{	"location": drawElementsMainConfig.idLocation,
+    									"no_change": 000000,
+									    //"type_change":  $("#typeChange").val(),
+    									"order_id": drawElementsMainConfig.orderId
+   										
+   				        			}, 
+   				        			function(response){
+   				        				bootbox.alert("Registro Eliminado");
+   				        				/*NOTA VALIDAR SI AL ELIMINAR SE VAN TODOS LOS REGISTROS*/
+   				        				cnocConnector.invokeMashup(cnocConnector.service1, {}, drawElementsMainConfig.getListConfig, "listConfig", "listConfigG");
+   				        				$( "#container").unmask();
+   				        			}
+   				        			, null, null);
+   				    	}else{
+   				    		$( "#container").unmask();
+   				    	}
+   				    }
+   				});
+
+   			} );
+   			
+   			$('#inboxTable tbody').on( 'click', '.editRow', function () {
+   				$( "#container").mask("Waiting...");
+   				var rowData = oTable.row($(this).parents('tr')).data();
+   				drawElementsMainConfig.idLocation = rowData[1];
+   				drawElementsMainConfig.typeChange = rowData[3];
+   				drawElementsMainConfig.orderId = rowData[5];
+   				cnocConnector.invokeMashup(cnocConnector.service2, {"consulta":drawElementsMainConfig.idLocation, "type":"LOCATION", "type_change":drawElementsMainConfig.typeChange, "order_id": drawElementsMainConfig.orderId}, drawElementsMainConfig.getInfoRowInboxLocation, "infoRowInbox", "infoRowInboxG");   				
+   			} );
+   			
+   			/*$("#inboxTable").delegate("tbody tr", "click", function () {
+   				$( "#container").mask("Waiting...");
    				// get the position of the current data from the node
 	   	         var aPos = oTable.fnGetPosition( this );	
 	   	         // get the data array
@@ -211,7 +275,9 @@ var drawElementsMainConfig = {
 	   	         drawElementsMainConfig.idLocation = aData[aPos][1];
 	   	         //console.log(drawElementsMainConfig.idLocation);	   	         
 	 			cnocConnector.invokeMashup(cnocConnector.service2, {"consulta":drawElementsMainConfig.idLocation, "type":"LOCATION"}, drawElementsMainConfig.getInfoRowInboxLocation, "infoRowInbox", "infoRowInboxG");	 			
-   			});   	
+   			});*/ 
+   			
+   			$( "#container").unmask();
    			
 		},getInfoRowInboxLocation: function(datos, containerElements, divContainer){
 			//console.log(datos);
@@ -319,7 +385,7 @@ var drawElementsMainConfig = {
 			
 			cnocConnector.invokeMashup(cnocConnector.serviceDashboarClass, {"networkCode":nc}, drawElementsMainConfig.dashboarClass, "dashClass", "dashClassG");
 			
-			cnocConnector.invokeMashup(cnocConnector.service2, {"consulta":drawElementsMainConfig.idLocation, "type":"NETWORKCOMP"}, drawElementsMainConfig.getInfoRowInboxNetworkComponent, "infoRowInbox", "infoRowInboxG");
+			cnocConnector.invokeMashup(cnocConnector.service2, {"consulta":drawElementsMainConfig.idLocation, "type":"NETWORKCOMP", "type_change":drawElementsMainConfig.typeChange, "order_id":drawElementsMainConfig.orderId}, drawElementsMainConfig.getInfoRowInboxNetworkComponent, "infoRowInbox", "infoRowInboxG");
 
 		},getInfoRowInboxNetworkComponent: function(datos, containerElements, divContainer){
 			$( "#container").mask("Waiting... Load Network Component ");
@@ -435,7 +501,7 @@ var drawElementsMainConfig = {
 				console.log(e);
 			}
 			
-			cnocConnector.invokeMashup(cnocConnector.service2, {"consulta":drawElementsMainConfig.idLocation, "type":"CIRCUIT"}, drawElementsMainConfig.getInfoRowInboxCircuit, "infoRowInbox", "infoRowInboxG");
+			cnocConnector.invokeMashup(cnocConnector.service2, {"consulta":drawElementsMainConfig.idLocation, "type":"CIRCUIT", "type_change":drawElementsMainConfig.typeChange, "order_id":drawElementsMainConfig.orderId}, drawElementsMainConfig.getInfoRowInboxCircuit, "infoRowInbox", "infoRowInboxG");
 		
 		},getInfoRowInboxCircuit: function(datos, containerElements, divContainer){
 			$( "#container").mask("Waiting... Load Circuit ");
@@ -447,9 +513,9 @@ var drawElementsMainConfig = {
 				$.each( datos, function( key, val ){
 					$.each( val, function( key, val ){
 						$.each( val, function( key, val ){
-							/*console.log(key);
+							console.log(key);
 							console.log("entro en CIRCUIT");
-							console.log(val.message);*/
+							console.log(val.message);
 							
 							try{
 								if(val.message === "Success"){
@@ -465,6 +531,14 @@ var drawElementsMainConfig = {
 							
 							if(drawElementsMainConfig.rowL == false){
 								if(val.instance.length>0){
+									
+									/*datos que se enviaran al IOM por JMS*/
+									try{$("#equip_type").val(val.instance[0].equip_type.content);}catch(e){$("#equip_type").val("");}
+									try{$("#equip_id").val(val.instance[0].equip_id.content);}catch(e){$("#equip_id").val("");}
+									try{$("#workflow_id").val(val.instance[0].workflow_id.content);}catch(e){$("#workflow_id").val("");}
+									try{$("#axs_link_id").val(val.instance[0].axs_link_id.content);}catch(e){$("#axs_link_id").val("");}
+									try{$("#order_id").val(val.instance[0].order_id.content);}catch(e){$("#order_id").val("");}
+									
 									try{$("#typeChange").val(val.instance[0].type_change.content);}catch(e){$("#typeChange").val("");}
 									try{$("#city").val(val.instance[0].city.content);}catch(e){$("#city").val("");}
 									try{$("#company").val(val.instance[0].company.content);}catch(e){$("#company").val("");}
@@ -538,6 +612,14 @@ var drawElementsMainConfig = {
 									
 									drawElementsMainConfig.utilnodeTypeL();
 								}else{
+									
+									/*datos que se enviaran al IOM por JMS*/
+									try{$("#equip_type").val(val.instance.equip_type.content);}catch(e){$("#equip_type").val("");}
+									try{$("#equip_id").val(val.instance.equip_id.content);}catch(e){$("#equip_id").val("");}
+									try{$("#workflow_id").val(val.instance.workflow_id.content);}catch(e){$("#workflow_id").val("");}
+									try{$("#axs_link_id").val(val.instance.axs_link_id.content);}catch(e){$("#axs_link_id").val("");}
+									try{$("#order_id").val(val.instance.order_id.content);}catch(e){$("#order_id").val("");}
+									
 									try{$("#typeChange").val(val.instance.type_change.content);}catch(e){$("#typeChange").val("");}
 									try{$("#city").val(val.instance.city.content);}catch(e){$("#city").val("");}
 									try{$("#company").val(val.instance.company.content);}catch(e){$("#company").val("");}
@@ -627,6 +709,14 @@ var drawElementsMainConfig = {
 							if(val.instance.length > 0){
 								
 								for(var i=0; i < val.instance.length; i++){
+									
+									/*datos que se enviaran al IOM por JMS*/
+									try{$("#equip_type").val(val.instance[i].equip_type.content);}catch(e){$("#equip_type").val("");}
+									try{$("#equip_id").val(val.instance[i].equip_id.content);}catch(e){$("#equip_id").val("");}
+									try{$("#workflow_id").val(val.instance[i].workflow_id.content);}catch(e){$("#workflow_id").val("");}
+									try{$("#axs_link_id").val(val.instance[i].axs_link_id.content);}catch(e){$("#axs_link_id").val("");}
+									try{$("#order_id").val(val.instance[i].order_id.content);}catch(e){$("#order_id").val("");}
+									
 									try{$("#ipWanDC").val(val.instance[i].ip_wan.content);}catch(e){$("#ipWanDC").val("");}								
 									try{$("#vendorDC").val(val.instance[i].vendor.content);}catch(e){$("#vendorDC").val("");}
 									//try{$("#subtypeDC").val(val.instance[i].subtype.content);}catch(e){$("#subtypeDC").val("");}
@@ -847,7 +937,7 @@ var drawElementsMainConfig = {
 				console.log(e);
 			}
 		
-			cnocConnector.invokeMashup(cnocConnector.service2, {"consulta":drawElementsMainConfig.idLocation, "type":"bizservice"}, drawElementsMainConfig.getInfoRowInboxBizService, "infoRowInbox", "infoRowInboxG");
+			cnocConnector.invokeMashup(cnocConnector.service2, {"consulta":drawElementsMainConfig.idLocation, "type":"bizservice", "type_change":drawElementsMainConfig.typeChange, "order_id":drawElementsMainConfig.orderId}, drawElementsMainConfig.getInfoRowInboxBizService, "infoRowInbox", "infoRowInboxG");
 			
 		},getInfoRowInboxBizService: function(datos, containerElements, divContainer){
 			$( "#container").mask("Waiting... Load Bizservice ");
@@ -1748,6 +1838,8 @@ var drawElementsMainConfig = {
 			}else if($("#requiredModule").val() === "YES"){
 				$(".requiredModule").show();	
 			}
+		},responseMessage: function(datos, containerElements, divContainer){
+			console.log(datos);
 		}
 		
 };

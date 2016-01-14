@@ -8,10 +8,11 @@
 	<title>CNOC ... ABC v1.0</title>
 	
 	<!-- Bootstrap Core CSS -->
-	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
+	<!-- <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>-->
 	<!-- <link rel="stylesheet" type="text/css" href="css/theme1.css"/>-->
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.css"/>
 	<link rel="stylesheet" type="text/css" href="css/bootstrap-multiselect.css"/>
-	<link rel="stylesheet" type="text/css" href="css/jquery.timepicker.css"/>
+	<link rel="stylesheet" type="text/css" href="css/jquery.timepicker.cssñ"/>
 	<link rel="stylesheet" type="text/css" href="css/datepicker.css"/>
 	<link rel="stylesheet" type="text/css" href="css/dataTables.bootstrap.css"/>
 	
@@ -67,6 +68,7 @@
 					<legend>Lista de Cambios Programados:</legend>						
 						<div class="row">
 							<div class="col-lg-12">
+								<div id="containerTableRefresh" style="width: 10%; border: 1px; margin-left: 15%; margin-top: -1%; position: absolute; z-index: 1000;"><button type="button" class="btn btn-default navbar-btn">Refresh</button></div>
 			            	 	<div id="containerTable" style="width: 100%; border: 1px;"></div>
 			            	 </div>
 						</div>	
@@ -116,6 +118,59 @@
 								</div>
 							</div>
 						</div>
+						
+						<!-- datos ocultos que se enviaran al IOM por JMS -->
+						<div class="row">
+							<div class="col-lg-3">
+								<div class="form-group">
+									<label class="control-label" for="equip_type">equip_type</label>
+									<div class="input-group">
+								    	<span class="input-group-addon">*</span>
+										<input class="form-control" placeholder="equip_type" name="equip_type" id="equip_type" type="text"/>
+									</div>
+								</div>
+							</div>
+							<div class="col-lg-3">
+								<div class="form-group">
+									<label class="control-label" for="equip_id">equip_id</label>
+									<div class="input-group">
+										<span class="input-group-addon">*</span>
+										<input class="form-control" placeholder="equip_id" name="equip_id" id="equip_id" type="text" />
+									</div>
+								</div>
+							</div>
+							<div class="col-lg-2">
+								<div class="form-group">
+									<label class="control-label" for="workflow_id">Type Change:</label>
+									<div class="input-group">
+										<span class="input-group-addon">*</span>
+										<input class="form-control" placeholder="workflow_id" name="workflow_id" id="workflow_id" type="text"/>
+									</div>
+								</div>
+							</div>
+							<div class="col-lg-2">
+								<div class="form-group">
+									<label class="control-label" for="axs_link_id">axs_link_id</label>
+									<div class="input-group">
+										<span class="input-group-addon">*</span>
+										<input class="form-control" placeholder="axs_link_id" name="axs_link_id" id="axs_link_id" type="text" />
+									</div>
+								</div>
+							</div>
+							
+							<div class="col-lg-2">
+								<div class="form-group">
+									<label class="control-label" for="order_id">order_id</label>
+									<div class="input-group">
+										<span class="input-group-addon">*</span>
+										<input class="form-control" placeholder="order_id" name="order_id" id="order_id" type="text" />
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						
+						
 					</fieldset>
 				</div>
 				
@@ -1144,7 +1199,13 @@
     <script>
     
     $(document).ready(function(){
-    	/*  ************************************************************  */
+    	
+    	/******************************************************************/
+    	$("#containerTableRefresh").on("click", function() {
+    		$( "#container").mask("Waiting... ");
+    		cnocConnector.invokeMashup(cnocConnector.service1, {}, drawElementsMainConfig.getListConfig, "listConfig", "listConfigG");
+    	});
+    	/******************************************************************/
     	$('#toggleNetworkC').bootstrapToggle('on');
     	$('#toggleCircuit').bootstrapToggle('on');
     	
@@ -1198,10 +1259,13 @@
 				cnocConnector.serviceCountry = serviceCatCountries;
 				cnocConnector.serviceCatState = serviceCatState;
 				cnocConnector.serviceCatCity = serviceCatCity;
-				cnocConnector.serviceDashboarClass = serviceDashboarClass
-				cnocConnector.sendJMS = serviceSendJMS;
+				cnocConnector.serviceDashboarClass = serviceDashboarClass				
 				cnocConnector.serviceSubtype = serviceSubtype;
 				cnocConnector.serviceCatFunction = serviceFunction;
+				
+				cnocConnector.sendJMS = serviceSendJMS;
+				cnocConnector.getDataIom = serviceGetDataIOM;
+				cnocConnector.serviceUpdateConfInbox =  serviceUpdateConfInbox;
 	
 		    }
 		});
@@ -1231,6 +1295,44 @@
 	    					if(cnocId==""){
 	    						alert("Add CNOC ID");
 	    					}else{
+	    						var location = $("#location").val();
+	    						
+	    						console.log(location);
+	    						console.log(cnocId);
+	    						console.log($("#order_id").val());
+	    						console.log($("#equip_type").val());
+	    						console.log($("#axs_link_id").val());
+	    						console.log($("#workflow_id").val());
+	    						console.log($("#equip_id").val());
+	    						console.log("SUCCESS");
+	    						
+	    						
+	    						/*cnocConnector.invokeMashup(cnocConnector.sendJMS, 
+	    			        			{	"cnocId": cnocId,
+	    									"cnocImpact": $("#order_id").val(), 
+	    			        				"cnocPriority": $("#equip_type").val(),
+	    			        				"cnocSeverity": $("#axs_link_id").val(),
+	    			        				"cnocSupport3": $("#workflow_id").val(),
+	    			        				"cnocUrgency": $("#equip_id").val(),	    			        				
+	    			        				"description": "",
+	    			        				"incidentStatus": "SUCCESS"
+	    			        			}, 
+	    			        			drawElementsMainConfig.sendJMS, null, null);*/
+	    						
+	    						cnocConnector.invokeMashup(cnocConnector.serviceUpdateConfInbox, 
+	    			        			{	"location": location,
+	    									"no_change": cnocId,
+	    									//"type_change": $("#typeChange").val(),
+	    									"order_id": $("#order_id").val()
+	    			        			}, 
+	    			        			function(response){
+	    			        				console.log(response);
+	    			        				console.log("Se actualizo la tabla con idcnoc: "+cnocId);
+	    			        				modal.modal('hide');
+	    			        				cnocConnector.invokeMashup(cnocConnector.service1, {}, drawElementsMainConfig.getListConfig, "listConfig", "listConfigG");
+	    			        				bootbox.alert("Se Envío CNOC ID");
+	    			        			}
+	    			        			, null, null);
 	    						
 	    					}
 	    					return false;
@@ -1243,6 +1345,44 @@
     						if(error == ""){
     							alert("Add Error Detail");    							
     						}else{
+    							var location = $("#location").val();
+    							console.log(location);
+	    						console.log($("#order_id").val());
+	    						console.log($("#equip_type").val());
+	    						console.log($("#axs_link_id").val());
+	    						console.log($("#workflow_id").val());
+	    						console.log(error);
+	    						console.log("FAIL");
+    							
+	    						
+	    						
+    							/*cnocConnector.invokeMashup(cnocConnector.sendJMS, 
+	    			        			{	"cnocId": "",
+	    									"cnocImpact": $("#order_id").val(), 
+	    			        				"cnocPriority": $("#equip_type").val(),
+	    			        				"cnocSeverity": $("#axs_link_id").val(),
+	    			        				"cnocSupport3": $("#workflow_id").val(),
+	    			        				"cnocUrgency": $("#equip_id").val(),	    			        				
+	    			        				"description": error,
+	    			        				"incidentStatus": "FAIL"
+	    			        			}, 
+	    			        			drawElementsMainConfig.sendJMS, null, null);*/
+    							
+    							console.log(cnocConnector.serviceUpdateConfInbox);
+    							cnocConnector.invokeMashup(cnocConnector.serviceUpdateConfInbox, 
+	    			        			{	"location": location,
+	    									"no_change": 000000,
+    									    //"type_change":  $("#typeChange").val(),
+	    									"order_id": $("#order_id").val()
+	    			        			}, 
+	    			        			function(response){	    			        				
+	    			        				console.log(response);
+	    			        				console.log("Se actualizo la tabla con idcnoc: "+cnocId);
+	    			        				modal.modal('hide');
+	    			        				cnocConnector.invokeMashup(cnocConnector.service1, {}, drawElementsMainConfig.getListConfig, "listConfig", "listConfigG");
+	    			        				bootbox.alert("Se Envío Mensaje de Error");
+	    			        			}
+	    			        			, null, null);
     							
     						}    		
     						return false;
@@ -1257,15 +1397,6 @@
     			}
         	});
         	modal.modal("show");
-        	/*cnocConnector.invokeMashup(cnocConnector.sendJMS, 
-        			{"cnocImpact":"Order_ID", 
-        				"cnocPriority":"Equip_Type",
-        				"cnocSeverity":"Axs_Link_ID",
-        				"cnocSupport3":"Gateway",
-        				"cnocUrgency":"Equip_ID",
-        				"description":"FAIL - Descripcion de mensaje de error",
-        				"reference":"Set Key"}, 
-        			drawElementsMainConfig.sendJMS, null, null);*/
 		});
         
         
@@ -1352,7 +1483,7 @@
         /*********************************************************************************************************/
   
         $("#save").on("click", function() {
-        	
+        	alert("Guardando");
         	$( "#container").mask("Waiting... Save Location");
         	
         	var networkCode  = 			$('#networkCode').val(); //"networkCode";
