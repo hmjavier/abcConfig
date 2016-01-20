@@ -303,6 +303,13 @@ var drawElementsMainConfig = {
 							
 							//console.log("rowL: "+drawElementsMainConfig.rowL);
 							
+							/*datos que se enviaran por jms*/
+							try{$("#equip_type").val(val.instance.equip_type.content);}catch(e){$("#equip_type").val("");}
+							try{$("#equip_id").val(val.instance.equip_id.content);}catch(e){$("#equip_id").val("");}
+							try{$("#workflow_id").val(val.instance.workflow_id.content);}catch(e){$("#workflow_id").val("");}
+							try{$("#axs_link_id").val(val.instance.axs_link_id.content);}catch(e){$("#axs_link_id").val("");}
+							try{$("#order_id").val(val.instance.order_id.content);}catch(e){$("#order_id").val("");}
+							
 							try{$("#fechaImple").val(val.instance.date_request.content);}catch(e){$("#fechaImple").val("");}
 							try{$("#typeChange").val(val.instance.type_change.content);}catch(e){$("#typeChange").val("");}
 							//try{$("#city").val(val.instance.city.content);}catch(e){$("#city").val("");}
@@ -408,11 +415,14 @@ var drawElementsMainConfig = {
 							
 							/************************************************************************/
 							/* DATA NETWORK COMPONENT FROM CONFINBOX */
+							
+							
 								//try{$("#istatus").val(val.instance.istatus.content);}catch(e){$("#istatus").val("");}
 								try{$("#model").val(val.instance.model.content);}catch(e){$("#model").val("");}
 								try{$("#osRelease").val(val.instance.os_release.content);}catch(e){$("#osRelease").val("");}
 								try{$("#scope").val(val.instance.scope.content);}catch(e){$("#scope").val("");}
 								try{$("#ipWan").val(val.instance.ip_wan.content);}catch(e){$("#ipWan").val("");}
+								try{$("#ipLan").val(val.instance.ip_lan.content);}catch(e){$("#ipLan").val("");}
 								try{$("#location").val(val.instance.location.content);}catch(e){$("#location").val("");}
 								try{$("#serialNo").val(val.instance.serial_no.content);}catch(e){$("#serialNo").val("");}
 								try{$("#monitoringIp").val(val.instance.monitor_ip.content);}catch(e){$("#monitoringIp").val("");}
@@ -500,6 +510,9 @@ var drawElementsMainConfig = {
 			}catch(e){
 				console.log(e);
 			}
+			
+			
+			console.log("Termine NetworkComponent");
 			
 			cnocConnector.invokeMashup(cnocConnector.service2, {"consulta":drawElementsMainConfig.idLocation, "type":"CIRCUIT", "type_change":drawElementsMainConfig.typeChange, "order_id":drawElementsMainConfig.orderId}, drawElementsMainConfig.getInfoRowInboxCircuit, "infoRowInbox", "infoRowInboxG");
 		
@@ -613,6 +626,95 @@ var drawElementsMainConfig = {
 									drawElementsMainConfig.utilnodeTypeL();
 								}else{
 									
+									/************************************************************************/
+									/* DATA NETWORK COMPONENT FROM CONFINBOX */
+										//try{$("#istatus").val(val.instance.istatus.content);}catch(e){$("#istatus").val("");}
+										try{$("#model").val(val.instance.model.content);}catch(e){$("#model").val("");}
+										try{$("#osRelease").val(val.instance.os_release.content);}catch(e){$("#osRelease").val("");}
+										try{$("#scope").val(val.instance.scope.content);}catch(e){$("#scope").val("");}
+										try{$("#ipWan").val(val.instance.ip_wan.content);}catch(e){$("#ipWan").val("");}
+										try{$("#location").val(val.instance.location.content);}catch(e){$("#location").val("");}
+										try{$("#serialNo").val(val.instance.serial_no.content);}catch(e){$("#serialNo").val("");}
+										try{$("#monitoringIp").val(val.instance.monitor_ip.content);}catch(e){$("#monitoringIp").val("");}
+										try{$("#allowSubscription").val(val.instance.allow_subscription.content);}catch(e){$("#allowSubscription").val("");}
+										try{$("#osVersion").val(val.instance.os_version.content);}catch(e){$("#osVersion").val("");}
+										//try{$("#requiredModule").val(val.instance.required_module.content);}catch(e){$("#requiredModule").val("");}
+										//try{$("#problemPriority").val(val.instance.problema_priority.content);}catch(e){$("#problemPriority").val("");}
+										try{$("#manufacturer").val(val.instance.manufacturer.content);}catch(e){$("#manufacturer").val("");}
+										//try{$("#subtype").val(val.instance.subtype.content);}catch(e){$("#subtype").val("");}
+										try{$("#owner").val(val.instance.owner.content);}catch(e){$("#owner").val("");}
+										try{$("#ipLoopback").val(val.instance.ip_loopback.content);}catch(e){$("#ipLoopback").val("");}
+										try{$("#monitoringProfile").val(val.instance.monitoring_profile.content);}catch(e){$("#monitoringProfile").val("");}
+										//try{$("#locationCode").val(val.instance.location.content);}catch(e){$("#locationCode").val("");};
+										try{$("#hostname").val(val.instance.ci_name.content);}catch(e){$("#hostname").val("");};
+										try{$("#dependence").val(val.instance.dependence.content);}catch(e){$("#ci_name").val("");};
+										
+										try{$("#modulePartNo").val("");}catch(e){$("#modulePartNo").val("");};
+										try{$("#moduleSerialNo").val("");}catch(e){$("#moduleSerialNo").val("");};
+										
+										$("#tableModulePart").empty();
+										
+										try{
+											$("#requiredModule option[value='" + val.instance.required_module.content + "']").prop("selected", true);
+											$("#requiredModule").multiselect("refresh");
+											drawElementsMainConfig.utilrequiredModule();
+										}catch(e){
+											$("#requiredModule option[value='None Selected']").prop("selected", true);
+											$("#requiredModule").multiselect("refresh");
+											console.log(e);
+											//$("#nodeTypeL").val("");																
+										}
+										
+										try{
+											$("#subType option[value='" + val.instance.subtype.content + "']").prop("selected", true);
+											$("#subType").multiselect("refresh");
+											drawElementsMainConfig.utilrequiredModule();
+										}catch(e){
+											$("#subType option[value='None Selected']").prop("selected", true);
+											$("#subType").multiselect("refresh");
+											console.log(e);
+											//$("#nodeTypeL").val("");																
+										}
+										
+										try{
+											$("#dashClass option[value='" + val.instance.site_category.content + "']").prop("selected", true);
+											$("#dashClass").multiselect("refresh");
+											drawElementsMainConfig.utilrequiredModule();
+										}catch(e){
+											$("#dashClass option[value='None Selected']").prop("selected", true);
+											$("#dashClass").multiselect("refresh");
+											console.log(e);
+											//$("#nodeTypeL").val("");																
+										}
+										
+										try{
+
+											var module_part_no = val.instance.module_part_no.module_part_no;
+											var module_serial_no = val.instance.module_serial_no.module_serial_no;
+											var dataTable = "";
+											
+											if(module_serial_no.length === module_part_no.length){
+												
+												for(var i=0; i < module_serial_no.length; i++){
+													dataTable += "<tr><td>"+module_part_no[i].content+"</td><td>"+module_serial_no[i].content+"</td></tr>";
+												}
+												//console.log(module_part_no.length);
+												
+											}else{
+												//console.log(module_part_no.length);
+											}
+											
+											$("#tableModulePart").append(dataTable);
+											
+										}catch(e){
+											//console.log("no entro para los arrayas");
+											$("#tableModulePart").empty();
+										}
+										
+										cnocUtilLibrary.utilValidationFields();
+									
+									
+									
 									/*datos que se enviaran al IOM por JMS*/
 									try{$("#equip_type").val(val.instance.equip_type.content);}catch(e){$("#equip_type").val("");}
 									try{$("#equip_id").val(val.instance.equip_id.content);}catch(e){$("#equip_id").val("");}
@@ -628,6 +730,7 @@ var drawElementsMainConfig = {
 										$("#networkCode").val(val.instance.network_code.content);
 										nc = val.instance.network_code.content;
 									}catch(e){$("#networkCode").val("");}
+									
 									//try{$("#country").val(val.instance.country.content);}catch(e){$("#country").val("");}
 									try{$("#customerSiteAlias").val(val.instance.customer_site_alias.content);}catch(e){$("#customerSiteAlias").val("");}
 									try{$("#delMun").val(val.instance.district.content);}catch(e){$("#delMun").val("");} //District
@@ -717,7 +820,8 @@ var drawElementsMainConfig = {
 									try{$("#axs_link_id").val(val.instance[i].axs_link_id.content);}catch(e){$("#axs_link_id").val("");}
 									try{$("#order_id").val(val.instance[i].order_id.content);}catch(e){$("#order_id").val("");}
 									
-									try{$("#ipWanDC").val(val.instance[i].ip_wan.content);}catch(e){$("#ipWanDC").val("");}								
+									try{$("#ipWanDC").val(val.instance[i].ip_wan.content);}catch(e){$("#ipWanDC").val("");}	
+									try{$("#ipLan").val(val.instance.ip_lan.content);}catch(e){$("#ipLan").val("");}
 									try{$("#vendorDC").val(val.instance[i].vendor.content);}catch(e){$("#vendorDC").val("");}
 									//try{$("#subtypeDC").val(val.instance[i].subtype.content);}catch(e){$("#subtypeDC").val("");}
 									//try{$("#istatusDC").val(val.instance[i].istatus.content);}catch(e){$("#istatusDC").val("");}																							
@@ -746,7 +850,7 @@ var drawElementsMainConfig = {
 									
 									
 									try{
-										$("#serviceQuality option[value='" + val.instance[i].service_quality.content + "']").prop("selected", true);
+										$("#serviceQuality option[value='V" + val.instance[i].service_quality.content + "']").prop("selected", true);
 										$("#serviceQuality").multiselect("refresh");
 									}catch(e){
 										$("#serviceQuality option[value='None Selected']").prop("selected", true);
@@ -806,7 +910,13 @@ var drawElementsMainConfig = {
 									}
 									
 									try{
-										$("#requiredPort option[value='" + val.instance[i].required_port.content + "']").prop("selected", true);
+										
+										if($("#typeChange").val() === "ALTA SERVICIO WAN"){
+											$("#requiredPort option[value='YES']").prop("selected", true);
+										}else{
+											$("#requiredPort option[value='" + val.instance.required_port.content + "']").prop("selected", true);
+										}
+										
 										$("#requiredPort").multiselect("refresh");
 									}catch(e){
 										$("#requiredPort option[value='None Selected']").prop("selected", true);
@@ -816,8 +926,14 @@ var drawElementsMainConfig = {
 									}									
 									
 									try{	
-										tableCircuit +="<tr><td>"+val.instance[i].unique_identifier.content+"</td><td>"+val.instance[i].ip_wan.content+"</td><td>"+val.instance[i].bandwidth.content+"</td><td>"+val.instance[i].bw_unit.content+"</td><td>"+val.instance[i].link_scheme.content+"</td></tr>";
+										if($("#typeChange").val() === "ALTA SERVICIO WAN"){
+											tableCircuit +="<tr><td>"+val.instance.unique_identifier.content+"</td><td>"+val.instance.ip_wan.content+"</td><td>"+val.instance.bandwidth.content+"</td><td>MB</td><td>"+val.instance.link_scheme.content+"</td></tr>";
+										}else{
+											tableCircuit +="<tr><td>"+val.instance.unique_identifier.content+"</td><td>"+val.instance.ip_wan.content+"</td><td>"+val.instance.bandwidth.content+"</td><td>"+val.instance.bw_unit.content+"</td><td>"+val.instance.link_scheme.content+"</td></tr>";
+										}
+										$("#tableReferenciasGConf").append(tableCircuit);
 									}catch(e){
+										console.log("No hay datos para la tabla de referrencias");
 										console.log(e);
 									}
 								}
@@ -829,7 +945,9 @@ var drawElementsMainConfig = {
 
 							}else{
 								console.log("Solo es un circuit, haber si entro");
-								try{$("#ipWanDC").val(val.instance.ip_wan.content);}catch(e){$("#ipWanDC").val("");}								
+								
+								try{$("#ipWanDC").val(val.instance.ip_wan.content);}catch(e){$("#ipWanDC").val("");}
+								try{$("#ipLan").val(val.instance.ip_lan.content);}catch(e){$("#ipLan").val("");}
 								try{$("#vendorDC").val(val.instance.vendor.content);}catch(e){$("#vendorDC").val("");}
 								//try{$("#subtypeDC").val(val.instance.subtype.content);}catch(e){$("#subtypeDC").val("");}
 								//try{$("#istatusDC").val(val.instance.istatus.content);}catch(e){$("#istatusDC").val("");}																							
@@ -896,9 +1014,14 @@ var drawElementsMainConfig = {
 									console.log(e);
 									//$("#interfaceType").val("");
 								}
-								
+
 								try{
-									$("#requiredPort option[value='" + val.instance.required_port.content + "']").prop("selected", true);
+									
+									if($("#typeChange").val() === "ALTA SERVICIO WAN"){
+										$("#requiredPort option[value='YES']").prop("selected", true);
+									}else{
+										$("#requiredPort option[value='" + val.instance.required_port.content + "']").prop("selected", true);
+									}
 									$("#requiredPort").multiselect("refresh");
 								}catch(e){
 									$("#requiredPort option[value='None Selected']").prop("selected", true);
@@ -908,7 +1031,8 @@ var drawElementsMainConfig = {
 								}
 								
 								try{
-									$("#serviceQuality option[value='" + val.instance.service_quality.content + "']").prop("selected", true);
+
+									$("#serviceQuality option[value='V" + val.instance.service_quality.content + "']").prop("selected", true);
 									$("#serviceQuality").multiselect("refresh");
 								}catch(e){
 									$("#serviceQuality option[value='None Selected']").prop("selected", true);
@@ -918,9 +1042,16 @@ var drawElementsMainConfig = {
 								}
 								
 								try{
-									tableCircuit +="<tr><td>"+val.instance.unique_identifier.content+"</td><td>"+val.instance.ip_wan.content+"</td><td>"+val.instance.bandwidth.content+"</td><td>"+val.instance.bw_unit.content+"</td><td>"+val.instance.link_scheme.content+"</td></tr>";
+									
+									if($("#typeChange").val() === "ALTA SERVICIO WAN"){
+										tableCircuit +="<tr><td>"+val.instance.unique_identifier.content+"</td><td>"+val.instance.ip_wan.content+"</td><td>"+val.instance.bandwidth.content+"</td><td>MB</td><td>"+val.instance.link_scheme.content+"</td></tr>";
+									}else{
+										tableCircuit +="<tr><td>"+val.instance.unique_identifier.content+"</td><td>"+val.instance.ip_wan.content+"</td><td>"+val.instance.bandwidth.content+"</td><td>"+val.instance.bw_unit.content+"</td><td>"+val.instance.link_scheme.content+"</td></tr>";
+									}
+																		
 									$("#tableReferenciasGConf").append(tableCircuit);
 								}catch(e){
+									console.log("No hay datos para la tabla de referrencias");
 									console.log(e);
 								}
 								

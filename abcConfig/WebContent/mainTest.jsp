@@ -1259,7 +1259,7 @@
 				cnocConnector.serviceCountry = serviceCatCountries;
 				cnocConnector.serviceCatState = serviceCatState;
 				cnocConnector.serviceCatCity = serviceCatCity;
-				cnocConnector.serviceDashboarClass = serviceDashboarClass				
+				cnocConnector.serviceDashboarClass = serviceDashboarClass;				
 				cnocConnector.serviceSubtype = serviceSubtype;
 				cnocConnector.serviceCatFunction = serviceFunction;
 				
@@ -1491,6 +1491,11 @@
         	var typeChange  = 			$('#typeChange').val(); //"typeChange";
         	var fechaImple = 			$('#fechaImple').val(); //"fechaImple";
          	//var unique_identifier  = 	$('#unique_identifier').val(); //"typeChange";
+         	var order_id =				$('#order_id').val(); //"nodeType";
+        	var equip_id =				$('#equip_id').val(); //"nodeType";
+        	var equip_type =			$('#equip_type').val(); //"nodeType";
+        	var axs_link_id =			$('#axs_link_id').val(); //"nodeType";
+        	var workflow_id =			$('#workflow_id').val(); //"nodeType";
         	
         	/************************************************************************************/
         	/*  DATA LOCATION INBOX  */
@@ -1509,7 +1514,9 @@
         	var contact  = 				$('#contact').val(); //"contact";
         	var phoneContact  =			$('#phoneContact').val(); //"phoneContact";
         	var mailContact  =			$('#mailContact').val(); //"mailContact";
-        	var nodeTypeL =				$('#nodeTypeL').val(); //"nodeType";            	
+        	var nodeTypeL =				$('#nodeTypeL').val(); //"nodeType";
+        	
+        	
         	
         	
         	var parametersL =  {
@@ -1536,7 +1543,12 @@
         		"phone_contact":phoneContact,
         		"customer_site_alias":customerSiteAlias,
         		"neighborhood": neighborhood,
-        		"node_type": nodeTypeL
+        		"node_type": nodeTypeL,
+        		"order_id":order_id,
+            	"equip_id":equip_id,
+            	"equip_type":equip_type,
+            	"axs_link_id":axs_link_id,
+            	"workflow_id":workflow_id
         		};
         	
         	if(drawElementsMainConfig.rowL){            		
@@ -1628,7 +1640,12 @@
             		"q1":q1,
             		"q2":q2,
             		"q3":q3,
-            		"ip_wan":ipWanDC
+            		"ip_wan":ipWanDC,
+            		"order_id":order_id,
+                	"equip_id":equip_id,
+                	"equip_type":equip_type,
+                	"axs_link_id":axs_link_id,
+                	"workflow_id":workflow_id
             		};
         	
         	
@@ -1718,6 +1735,12 @@
             		"module_part_no":modulePartNoData, //array
             		"module_serial_no":moduleSerialNoData  //array          		
             		//"hostname": hostname, // no esta en inbox
+            		,
+            		"order_id":order_id,
+                	"equip_id":equip_id,
+                	"equip_type":equip_type,
+                	"axs_link_id":axs_link_id,
+                	"workflow_id":workflow_id
         	};
         	
   	      	
@@ -1767,7 +1790,12 @@
             		"default_impact":defaultImpactBS,
             		//"alert_name":alertNameBS,
             		"service_name":serviceName,
-            		"scope_biz":serviceScope
+            		"scope_biz":serviceScope,
+            		"order_id":order_id,
+                	"equip_id":equip_id,
+                	"equip_type":equip_type,
+                	"axs_link_id":axs_link_id,
+                	"workflow_id":workflow_id
         	};
         	
         	
@@ -1825,7 +1853,12 @@
             		"ip_wan":ipWanP,
             		"alert_name":alertNameP,
             		"monitoring_profile":monitoringProfileP,
-            		"mac_imei":macImei
+            		"mac_imei":macImei,
+            		"order_id":order_id,
+                	"equip_id":equip_id,
+                	"equip_type":equip_type,
+                	"axs_link_id":axs_link_id,
+                	"workflow_id":workflow_id
         	};
         	
         	/*
